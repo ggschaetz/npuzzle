@@ -1,0 +1,48 @@
+#!/usr/bin/env python
+
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    main.py                                            :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: gschaetz <gschaetz@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2018/10/09 14:14:46 by gschaetz          #+#    #+#              #
+#    Updated: 2018/10/09 14:14:49 by gschaetz         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+import argparse
+import numpy as np
+import sys
+import parse 
+from map import Map
+import solve
+import heuristique as hrst
+#import a_star as star
+import a_star_v1 as star
+
+if __name__ == "__main__":
+
+    parser_args = argparse.ArgumentParser()
+
+    #group = parser_args.add_mutually_exclusive_group()
+    #group.add_argument("-M", "--Manhatan", action="store_true")
+    #group.add_argument("-E", "--Euclidiene", action="store_true")
+    #group.add_argument("-G", "--Greedy", action="store_true")
+    parser_args.add_argument("file_name")
+    parser_args.add_argument("--heur", choices={'Manhatan', 'Euclidiene', 'Inversion', 'Greedy', 'Missplace'}, default="Manhatan", help="Euclidiene,Manhatan or Greedy")
+
+    args = parser_args.parse_args()
+
+    map = Map(args)
+    print ("map from ", map.file_name, " file")
+    map.parse_input()
+    map.compute_start_map()
+    print ("\nstart map is : \n\n", map.start_map, "\n")
+    map.comput_final_map()
+    map.check_solvable()
+    print ("final map is : \n\n", map.final_map.astype(np.int64), "\n")
+    print ("map solvable, wait a few moment for resolution...")
+    hrst.sum_heuristique(map, map.start_map)
+    star.a_star(map)
